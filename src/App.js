@@ -1,25 +1,37 @@
-import logo from './logo.svg';
-import './App.css';
+import { Viewer, Worker } from '@react-pdf-viewer/core';
+import '@react-pdf-viewer/core/lib/styles/index.css';
+import React, { useState } from 'react';
 
-function App() {
+const App = () => {
+  const [pdfFile, setPdfFile] = useState(null);
+
+  // Hàm xử lý khi upload file PDF
+  const handleFileUpload = (event) => {
+    const file = event.target.files[0];
+    if (file && file.type === 'application/pdf') {
+      const fileURL = URL.createObjectURL(file);
+      setPdfFile(fileURL);  // Lưu URL của file PDF vào state
+    } else {
+      alert('Please upload a valid PDF file');
+    }
+  };
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <h2>Upload and Display PDF</h2>
+      <input type="file" accept="application/pdf" onChange={handleFileUpload} />
+      
+      {/* Nếu có file PDF, hiển thị nó */}
+      {pdfFile && (
+        <div style={{ height: '580px', width: '900px', margin: '0 auto' }}>
+          {/* Điều chỉnh chiều rộng bằng cách đặt width cho div */}
+          <Worker workerUrl={`https://unpkg.com/pdfjs-dist@3.11.174/build/pdf.worker.min.js`}>
+            <Viewer fileUrl={pdfFile} />
+          </Worker>
+        </div>
+      )}
     </div>
   );
-}
+};
 
 export default App;
